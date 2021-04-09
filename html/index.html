@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0" />
+        <title>Products</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    </head>
+
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="/html/">Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="orders.html">Orders</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="registration.html">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="auth.html">Auth</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" onclick="deleteAllCookies()">Logout</a>
+        </li>
+        <script>
+            function deleteAllCookies() {
+                            var cookies = document.cookie.split(";");
+
+                            for (var i = 0; i < cookies.length; i++) {
+                                            var cookie = cookies[i];
+                                            var eqPos = cookie.indexOf("=");
+                                            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                                            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                                        }
+
+                            location.reload();
+                        }
+        </script>
+    </ul>
+
+    <div class="modal-body">
+
+
+
+        <h2>Фильтры по полям</h2>
+        <form class="form" action="" method="get">
+            <p><label for="id_category">Category:</label> <select name="category" id="id_category">
+                <option value="" selected="">---------</option>
+                <option value="1">Получить через api</option>
+            </select></p>
+            <p><label for="id_subcategory">Subcategory:</label> <select name="subcategory" id="id_subcategory">
+                <option value="" selected="">---------</option>
+                <option value="1">Получить через api</option>
+            </select></p>
+            <p><label for="id_min_price">Price больше или равно:</label> <input type="number" name="min_price" step="any" id="id_min_price"></p>
+            <p><label for="id_max_price">Price меньше или равно:</label> <input type="number" name="max_price" step="any" id="id_max_price"></p>
+            <p><label for="id_min_count">Count больше или равно:</label> <input type="number" name="min_count" step="any" id="id_min_count"></p>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+
+
+        <hr>
+
+        <h2>Найти</h2>
+        <form class="form-inline">
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text" class="form-control" style="width: 350px" name="search" value="">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Найти</button>
+                    </span>
+                </div>
+            </div>
+        </form>
+
+
+        <hr>
+
+
+        <h2>Порядок</h2>
+        <div class="list-group">
+
+
+            <button onclick="insertParam('ordering', 'name')" class="list-group-item">name - по возрастанию</button>
+
+            <button onclick="insertParam('ordering', '-name')" class="list-group-item">name - по убыванию</button>
+
+            <button onclick="insertParam('ordering', 'price')" class="list-group-item">price - по возрастанию</button>
+
+            <button onclick="insertParam('ordering', '-price')" class="list-group-item">price - по убыванию</button>
+
+            <button onclick="insertParam('ordering', 'count')" class="list-group-item">count - по возрастанию</button>
+
+            <button onclick="insertParam('ordering', '-count')" class="list-group-item">count - по убыванию</button>
+
+
+        </div>
+
+
+    </div>
+
+    <body class="container">
+        <h1>Products</h1>
+        <table class="table" id="products"></table>
+    </body>
+    <a id="prev">Prev</a>
+    <a id="next">Next</a>
+</html>
+
+<script>
+    // api url
+    api_url = "/products/" + document.location.search;
+
+    // Defining async function
+    async function getapi(url, func) {
+            // Storing response
+            const response = await fetch(url);
+
+            // Storing data in form of JSON
+            var data = await response.json();
+            console.log(data);
+            func(data);
+        }
+    // Calling that async function
+    getapi(api_url, showProducts);
+    getapi("/categories/", showCategories);
+    getapi("/subcategories/", showSubCategories);
+
+    // Function to define innerHTML for HTML table
+    function showProducts(data) {
+            let tab = 
+                `<tr>
+   <th>Category</th>
+   <th>Subcategory</th>
+   <th>Name</th>
+   <th>Description</th>
+   <th>Price</th>
+   <th>Count</th>
+   </tr>`;
+
+            // Loop to access all rows 
+            for (let r of data.results) {
+                    tab += `<tr> 
+   <td>${r.category}</td>
+   <td>${r.subcategory}</td>
+   <td>${r.name}</td>
+   <td>${r.description}</td>
+   <td>${r.price}</td>
+   <td>${r.count}</td>
+   </tr>`;
+                }
+            // Setting innerHTML as tab variable
+            document.getElementById("products").innerHTML = tab;
+            if (data.previous !== null) {
+                    document.getElementById("prev").setAttribute("href", "?" + data.previous.split('?')[1]);
+                }
+
+            if (data.next !== null) {
+                    document.getElementById("next").setAttribute("href", "?" + data.next.split('?')[1]);
+                }
+        }
+
+    function showCategories(data) {
+            let tab = `<option value="" selected="">---------</option>`;
+
+            for (let r of data) {
+                    tab += `<option value="${r.id}">${r.name.substring(0, 30)}</option>`;
+                }
+
+            document.getElementById("id_category").innerHTML = tab;
+        }
+
+
+    function showSubCategories(data) {
+            let tab = `<option value="" selected="">---------</option>`;
+
+            for (let r of data) {
+                    tab += `<option value="${r.id}">${r.name.substring(0, 30)}</option>`;
+                }
+
+            document.getElementById("id_subcategory").innerHTML = tab;
+        }
+
+
+
+
+    function insertParam(key, value) {
+            key = encodeURIComponent(key);
+            value = encodeURIComponent(value);
+
+            // kvp looks like ['key1=value1', 'key2=value2', ...]
+            var kvp = document.location.search.substr(1).split('&');
+            let i=0;
+
+            for(; i<kvp.length; i++){
+                    if (kvp[i].startsWith(key + '=')) {
+                            let pair = kvp[i].split('=');
+                            pair[1] = value;
+                            kvp[i] = pair.join('=');
+                            break;
+                        }
+                }
+
+            if(i >= kvp.length){
+                    kvp[kvp.length] = [key,value].join('=');
+                }
+
+            // can return this or...
+            let params = kvp.join('&');
+
+            // reload page with new params
+            document.location.search = params;
+        }
+</script>  

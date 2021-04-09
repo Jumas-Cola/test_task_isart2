@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0" />
+        <title>Orders</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    </head>
+
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="/html/">Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="orders.html">Orders</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="registration.html">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="auth.html">Auth</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" onclick="deleteAllCookies()">Logout</a>
+        </li>
+        <script>
+            function deleteAllCookies() {
+                            var cookies = document.cookie.split(";");
+
+                            for (var i = 0; i < cookies.length; i++) {
+                                            var cookie = cookies[i];
+                                            var eqPos = cookie.indexOf("=");
+                                            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                                            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                                        }
+
+                            location.reload();
+                        }
+        </script>
+    </ul>
+
+    <body class="container">
+        <h1>Auth</h1>
+        <form>
+            <div class="form-group">
+                <label for="inputLogin1">Login</label>
+                <input name="username" type="text" class="form-control" id="inputLogin1" aria-describedby="loginHelp" placeholder="Enter login">
+            </div>
+            <div class="form-group">
+                <label for="inputPassword1">Password</label>
+                <input name="password" type="password" class="form-control" id="inputPassword1" placeholder="Password">
+            </div>
+            <button onclick="getapi(api_url, setTokenInCookies)"  type="button" class="btn btn-primary">Отправить</button>
+        </form>
+    </body>
+</html>
+
+<script>
+    // api url
+    api_url = "/api-token-auth/";
+
+    // Defining async function
+    async function getapi(url, func) {
+            // Storing response
+            const response = await fetch(url, {
+                    method: 'post',
+                    headers: {
+                            'Accept': 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                            username: document.getElementById('inputLogin1').value,
+                            password: document.getElementById('inputPassword1').value
+                        })
+                });
+
+            // Storing data in form of JSON
+            var data = await response.json();
+            console.log(data);
+            func(data);
+        }
+
+    function setTokenInCookies(data) {
+            let token = data.token; 
+            if (typeof token !== "undefined") {
+                    document.cookie = `token=${token}; samesite=strict`; // обновляем только куки с именем 'user'
+                    alert("Login Success");
+                    location.reload();
+                } else {
+                    alert("Login Failed");
+                }
+        }
+
+</script>  

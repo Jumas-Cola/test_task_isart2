@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0" />
+        <title>Orders</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    </head>
+
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="/html/">Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="orders.html">Orders</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="registration.html">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="auth.html">Auth</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" onclick="deleteAllCookies()">Logout</a>
+        </li>
+        <script>
+            function deleteAllCookies() {
+                            var cookies = document.cookie.split(";");
+
+                            for (var i = 0; i < cookies.length; i++) {
+                                            var cookie = cookies[i];
+                                            var eqPos = cookie.indexOf("=");
+                                            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                                            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                                        }
+
+                            location.reload();
+                        }
+        </script>
+    </ul>
+
+    <body class="container">
+        <h1>Register</h1>
+
+
+        <form class="form-horizontal">
+            <fieldset>
+
+                <div class="form-group ">
+
+                    <label class="col-sm-2 control-label ">
+                        Пароль
+                    </label>
+
+
+                    <div class="col-sm-10">
+                        <input name="password" id="password" class="form-control" type="password" value="">
+
+                    </div>
+                </div>
+
+                <div class="form-group ">
+
+                    <label class="col-sm-2 control-label ">
+                        Имя пользователя
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input name="username" id="username" class="form-control" type="text" value="">
+
+                        <span class="help-block">Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.</span>
+
+                    </div>
+                </div>
+
+                <div class="form-group ">
+
+                    <label class="col-sm-2 control-label ">
+                        Имя
+                    </label>
+
+                    <div class="col-sm-10">
+                        <input name="first_name" id="first_name" class="form-control" type="text" value="">
+
+                    </div>
+                </div>
+
+                <div class="form-group ">
+
+                    <label class="col-sm-2 control-label ">
+                        Фамилия
+                    </label>
+
+
+                    <div class="col-sm-10">
+                        <input name="last_name" id="last_name" class="form-control" type="text" value="">
+
+                    </div>
+                </div>
+
+                <div class="form-group ">
+
+                    <label class="col-sm-2 control-label ">
+                        Адрес электронной почты
+                    </label>
+
+
+                    <div class="col-sm-10">
+                        <input name="email" id="email" class="form-control" type="email" value="">
+
+                    </div>
+                </div>
+
+                <div class="form-group ">
+
+                    <label class="col-sm-2 control-label ">
+                        Password confirm
+                    </label>
+
+
+                    <div class="col-sm-10">
+                        <input name="password_confirm" id="password_confirm" class="form-control" type="password" value="">
+
+                    </div>
+                </div>
+
+
+                <div class="form-actions">
+                    <button id="sendForm" type="button" class="btn btn-primary js-tooltip" title="" data-original-title="Make a POST request on the Register resource">Отправить</button>
+                </div>
+            </fieldset>
+        </form>
+
+    </body>
+</html>
+
+<script>
+    // api url
+    api_url = "/accounts/register/";
+
+    // Defining async function
+    async function getapi(url) {
+            // Storing response
+            const response = await fetch(url, {
+                    method: 'post',
+                    headers: {
+                            'Accept': 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                            password: document.getElementById('password').value,
+                            username: document.getElementById('username').value,
+                            first_name: document.getElementById('first_name').value,
+                            last_name: document.getElementById('last_name').value,
+                            email: document.getElementById('email').value,
+                            password_confirm: document.getElementById('password_confirm').value
+                        })
+                });
+
+            // Storing data in form of JSON
+            var data = await response.json();
+            alert(JSON.stringify(data));
+            if (typeof data.id !== "undefined") {
+                    location.reload();
+            }
+        }
+
+    const buttonElement = document.getElementById('sendForm');
+
+    buttonElement.addEventListener('click', () => getapi(api_url));
+
+</script>  
