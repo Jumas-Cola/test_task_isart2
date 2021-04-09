@@ -8,6 +8,11 @@
 
 [models](https://github.com/Jumas-Cola/test_task_isart2/blob/main/isart2/shop/models.py)
 
+## Аккаунт администратора
+
+Логин: admin
+Пароль: admin
+
 ## Страницы
 
 - / - корень api
